@@ -16,11 +16,7 @@ import (
 
 	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/client-go/tools/clientcmd/api"
-
-
-
 )
-
 
 var (
 	namespaceExample = `
@@ -280,13 +276,11 @@ func (o *NamespaceOptions) setNamespace(fromContext *api.Context, withContextNam
 	return clientcmd.ModifyConfig(configAccess, o.rawConfig, true)
 }
 
-
 func main() {
 	fmt.Println("Hello,", Magenta("Aurora"))
 	fmt.Println(Bold(Cyan("Cya!")))
 
-
-  // ctx, err = client.getContext()
+	// ctx, err = client.getContext()
 	// if err != nil {
 	// 	return nil, err
 	// }

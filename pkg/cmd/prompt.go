@@ -2,6 +2,8 @@ package cmd
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
 	"strings"
 
 	. "github.com/logrusorgru/aurora"
@@ -11,6 +13,7 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/client-go/tools/clientcmd/api"
 
+	// "github.com/jlesquembre/kubeprompt/pkg/cmd"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 )
 
@@ -56,6 +59,32 @@ func NewNamespaceOptions(streams genericclioptions.IOStreams) *NamespaceOptions 
 	}
 }
 
+var tempDir string = filepath.Join(os.TempDir(), "kubeprompt")
+
+func JlCmd() {
+	config, err := genericclioptions.NewConfigFlags(true).ToRawKubeConfigLoader().RawConfig()
+	exit(err)
+	fmt.Println("-----", config.CurrentContext)
+
+	// foo := genericclioptions.NewConfigFlags(true) //.ConfigAccess()
+	foo := genericclioptions.NewConfigFlags(true).ToRawKubeConfigLoader().ConfigAccess()
+	// array of files, if multiple files in KUBECONFIG
+	fmt.Println("-----", foo.GetLoadingPrecedence())
+
+	// first file in the array
+	fmt.Println("-----", foo.GetDefaultFilename())
+
+	// bar, err := genericclioptions.NewConfigFlags(true).ToRawKubeConfigLoader().ClientConfig()
+	clientcmd.WriteToFile(config, "/tmp/jlle.yaml")
+	// fmt.Println("CONFIG", bar.GoString())
+	// fmt.Println("-----", foo.IsExplicitFile())
+	// fmt.Println("-----", foo.GetExplicitFile())
+	// GetLoadingPrecedence() []string
+	//   GetDefaultFilename() string
+	//   IsExplicitFile() bool
+	//   GetExplicitFile() string
+}
+
 // NewCmdNamespace provides a cobra command wrapping NamespaceOptions
 func NewCmdNamespace(streams genericclioptions.IOStreams) *cobra.Command {
 	o := NewNamespaceOptions(streams)
@@ -67,15 +96,15 @@ func NewCmdNamespace(streams genericclioptions.IOStreams) *cobra.Command {
 		SilenceUsage: true,
 		RunE: func(c *cobra.Command, args []string) error {
 			if err := o.Complete(c, args); err != nil {
-	      fmt.Println(Bold(Cyan("Complete")))
+				fmt.Println(Bold(Cyan("Complete")))
 				return err
 			}
 			if err := o.Validate(); err != nil {
-	      fmt.Println(Bold(Cyan("Validate")))
+				fmt.Println(Bold(Cyan("Validate")))
 				return err
 			}
 			if err := o.Run(); err != nil {
-	      fmt.Println(Bold(Cyan("Run")))
+				fmt.Println(Bold(Cyan("Run")))
 				return err
 			}
 
@@ -201,19 +230,28 @@ func (o *NamespaceOptions) Run() error {
 		return o.setNamespace(o.resultingContext, o.resultingContextName)
 	}
 
+	subShell(map[string]string{
+		"FOO": "BAR",
+	})
+
 	namespaces := map[string]bool{}
 
 	for name, c := range o.rawConfig.Contexts {
 		if !o.listNamespaces && name == o.rawConfig.CurrentContext {
 			if len(c.Namespace) == 0 {
+				fmt.Println(Bold(Cyan("Current Error")))
 				return fmt.Errorf("no namespace is set for your current context: %q", name)
 			}
+			fmt.Fprintf(o.Out, "(K8S %s:%s)\n", Bold(Yellow(name)), Bold(Magenta(c.Namespace)))
+			fmt.Println(getHomeDir())
+			// fmt.Println(Bold(Cyan("Current WS")))
 
-	    fmt.Println(Bold(Cyan("Current WS")))
-	    fmt.Println(Bold(Cyan(c.Cluster)))
-	    fmt.Println(Bold(Cyan(c.AuthInfo)))
-	    fmt.Println(Bold(Cyan(c.LocationOfOrigin)))
-      fmt.Fprintf(o.Out, "Current Namespace: %s\n", c.Namespace)
+			// fmt.Println(Bold(Cyan("Current WS")))
+			// fmt.Println(Bold(Cyan(c.Cluster)))
+			// fmt.Println(Bold(Cyan(name)))
+			// fmt.Println(Bold(Cyan(c.AuthInfo)))
+			fmt.Println("Location", Bold(Cyan(c.LocationOfOrigin)))
+			// fmt.Fprintf(o.Out, "Current Namespace: %s\n", c.Namespace)
 			return nil
 		}
 

@@ -3,6 +3,7 @@ module github.com/jlesquembre/kubeprompt
 go 1.12
 
 require (
+	github.com/kjk/u v0.0.0-20191011025343-c1fee2a93041
 	github.com/logrusorgru/aurora v0.0.0-20190803045625-94edacc10f9b
 	github.com/spf13/cobra v0.0.5
 	github.com/spf13/pflag v1.0.3

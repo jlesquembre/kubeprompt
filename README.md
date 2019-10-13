@@ -17,3 +17,24 @@ env variable (e.g.: LOCAL_KUBECONFIG) to know if KUBECONFIG is pointing to a
 temporal file
 
 See https://github.com/kubernetes/kubernetes/pull/60044#issuecomment-405420482
+
+TODO if the namespace is not set, we get an error Error: no namespace is set for
+your current context: "gke_spr-sandbox-1_us-central1-a_micro-cluster-1"
+
+```
+go run cmd/kubeprompt.go
+```
+
+based on: https://github.com/kubernetes/sample-cli-plugin
+
+# Usage
+
+We offer to commands, `kubeprompt` and `kubeon`.
+
+`kubeprompt` will print to stdout information about the current cluster, but
+first it needs to be enabled. It is considered enabled if the environment
+variable `KUBECONFIG` is set to a file in the `$TMP/kubeprompt` directory
+
+`kubeon` will enable the prompt. To do that, it will copy your current
+`KUBECONFIG` to a temporal file in the `$TMP/kubeprompt` directory and launch a
+new shell.
