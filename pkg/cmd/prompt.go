@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -60,6 +61,69 @@ func NewNamespaceOptions(streams genericclioptions.IOStreams) *NamespaceOptions 
 }
 
 var tempDir string = filepath.Join(os.TempDir(), "kubeprompt")
+
+/***
+
+TODO
+kubeon:
+
+- check if the configuration is enabled
+  - if yes: do nothing
+  - if no:
+    - make temp file
+    - write config to new temp file
+    - launch subshell
+
+kubeprompt:
+
+- check if the configuration is enabled
+  - if yes:
+    - display it
+  - if no: do nothing
+
+*/
+
+func isPromptActive(path string) bool {
+	return strings.HasPrefix(path, tempDir+"/")
+}
+
+func enableKubeprompt(config clientcmd.ClientConfig) {
+	err := os.MkdirAll(tempDir, os.ModePerm)
+	exit(err)
+	tmpfile, err := ioutil.TempFile(tempDir, "kubeconfig.*.yaml")
+	configFile := tmpfile.Name()
+	exit(err)
+	defer os.Remove(configFile)
+
+	rawConfig, err := config.RawConfig()
+	exit(err)
+	clientcmd.WriteToFile(rawConfig, configFile)
+
+	subShell(map[string]string{
+		"KUBECONFIG": configFile})
+}
+
+func printPrompt(config clientcmd.ClientConfig) {
+	rawConfig, err := config.RawConfig()
+	ctx := rawConfig.CurrentContext
+	ns, _, err := config.Namespace()
+	exit(err)
+	fmt.Printf("(K8S %s:%s)\n", Bold(Yellow(ctx)), Bold(Magenta(ns)))
+
+}
+
+func JlCmd2() {
+	config := genericclioptions.NewConfigFlags(true).ToRawKubeConfigLoader()
+	kubeconfigPath := config.ConfigAccess().GetDefaultFilename()
+	if isPromptActive(kubeconfigPath) {
+		fmt.Println("KUBEPROMPT >", kubeconfigPath)
+		printPrompt(config)
+	} else {
+		enableKubeprompt(config)
+		// fmt.Println("CONFIG >", kubeconfigPath)
+	}
+
+}
 
 func JlCmd() {
 	config, err := genericclioptions.NewConfigFlags(true).ToRawKubeConfigLoader().RawConfig()

@@ -3,8 +3,8 @@ package cmd
 import (
 	"fmt"
 	"os"
-	"path"
-	// "os/exec"
+	// "path"
+	"os/exec"
 	// "runtime"
 	// "strings"
 	// "errors"
@@ -58,23 +58,23 @@ func subShell(extraEnv map[string]string) {
 		shell = "/bin/bash"
 		// exit(errors.New("'SHELL' environment variable is not set"))
 	}
-	fmt.Println("Current shell:", shell)
-	cpConfig()
+	// fmt.Println("Current shell:", shell)
+	// cpConfig()
 
-	// cmd := exec.Command(shell)
-	// cmd.Stderr = os.Stderr
-	// cmd.Stdout = os.Stdout
-	// cmd.Stdin = os.Stdin
-	// cmd.Run()
+	cmd := exec.Command(shell)
+	cmd.Stderr = os.Stderr
+	cmd.Stdout = os.Stdout
+	cmd.Stdin = os.Stdin
+	cmd.Run()
 }
 
-func cpConfig() {
-	tempDir := path.Join(os.TempDir(), "kubeprompt")
-	err := os.MkdirAll(tempDir, os.ModePerm)
-	exit(err)
-	file, err := ioutil.TempFile(tempDir, "kubeconfig.*.yaml")
-	exit(err)
-	// defer os.Remove(file.Name())
+// func cpConfig() {
+// 	tempDir := path.Join(os.TempDir(), "kubeprompt")
+// 	err := os.MkdirAll(tempDir, os.ModePerm)
+// 	exit(err)
+// 	file, err := ioutil.TempFile(tempDir, "kubeconfig.*.yaml")
+// 	exit(err)
+// 	// defer os.Remove(file.Name())
 
-	fmt.Println(file.Name())
-}
+// 	fmt.Println(file.Name())
+// }

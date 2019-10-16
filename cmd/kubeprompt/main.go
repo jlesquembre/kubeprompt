@@ -35,5 +35,5 @@ func mainOO() {
 }
 
 func main() {
-	cmd.JlCmd()
+	cmd.JlCmd2()
 }
