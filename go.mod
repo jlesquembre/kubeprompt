@@ -1,14 +1,11 @@
 module github.com/jlesquembre/kubeprompt
 
-go 1.12
+go 1.13
 
 require (
-	github.com/kjk/u v0.0.0-20191011025343-c1fee2a93041
-	github.com/logrusorgru/aurora v0.0.0-20190803045625-94edacc10f9b
+	github.com/logrusorgru/aurora v0.0.0-20191017060258-dc85c304c434
 	github.com/spf13/cobra v0.0.5
-	github.com/spf13/pflag v1.0.3
-	k8s.io/cli-runtime v0.0.0-20190831080432-9d670f2021f4
-	k8s.io/client-go v0.0.0-20190831074946-3fe2abece89e
-	k8s.io/sample-cli-plugin v0.0.0-20190831080527-19925b8bb167
-	rsc.io/quote v1.5.2
+	github.com/stretchr/testify v1.4.0 // indirect
+	k8s.io/cli-runtime v0.0.0-20191016113839-5e0efc75cd33
+	k8s.io/client-go v0.0.0-20191014070654-bd505ee787b2
 )
