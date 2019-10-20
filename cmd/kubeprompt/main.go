@@ -1,9 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/jlesquembre/kubeprompt/pkg/cmd"
+	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 )
@@ -35,5 +37,20 @@ func mainOO() {
 }
 
 func main() {
-	cmd.JlCmd2()
+	var Print bool
+	var rootCmd = &cobra.Command{
+		Use:   "kubeprompt",
+		Short: "Hugo is a very fast static site generator",
+		Long: `A Fast and Flexible Static Site Generator built with
+                love by spf13 and friends in Go.
+                Complete documentation is available at http://hugo.spf13.com`,
+		Run: func(ccmd *cobra.Command, args []string) {
+			fmt.Println("flag:", Print)
+			cmd.JlCmd2()
+			// Do Stuff Here
+		},
+	}
+	rootCmd.PersistentFlags().BoolVarP(&Print, "print", "p", false, "print without checking if enabled")
+	rootCmd.Execute()
+	// cmd.JlCmd2()
 }
