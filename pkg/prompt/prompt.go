@@ -68,12 +68,24 @@ func printPrompt(config clientcmd.ClientConfig) {
 	fmt.Printf("(K8S %s:%s)\n", Bold(Yellow(ctx)), Bold(Magenta(ns)))
 }
 
-func Run(printOnly bool) {
+func Run(force bool, printOnly bool, check bool) {
 	config := genericclioptions.NewConfigFlags(true).ToRawKubeConfigLoader()
 	kubeconfigPath := config.ConfigAccess().GetDefaultFilename()
-	if isPromptActive(kubeconfigPath) || printOnly {
+	isActive := isPromptActive(kubeconfigPath)
+
+	if check {
+		if isActive {
+			fmt.Println("kubeprompt is", Bold("active"))
+		} else {
+			fmt.Println("kubeprompt is", Bold("NOT"), "active")
+		}
+		return
+	}
+
+	if isActive || force {
 		printPrompt(config)
-	} else {
+	} else if !printOnly {
 		enableKubeprompt(config)
 	}
+
 }

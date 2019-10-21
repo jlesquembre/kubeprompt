@@ -38,3 +38,14 @@ variable `KUBECONFIG` is set to a file in the `$TMP/kubeprompt` directory
 `kubeon` will enable the prompt. To do that, it will copy your current
 `KUBECONFIG` to a temporal file in the `$TMP/kubeprompt` directory and launch a
 new shell.
+
+`kubeprompt`: it will print the current K8S context and namespace, if kubeprompt
+is enable. If not, it will start a sub shell with kubeprompt enabled.
+
+Flags:
+
+- `-p`, `--print-only` print if kubeprompt is enabled, don't do anything if not
+- `-f`, `--force` print without checking if kubeprompt is enabled
+- `-c`, `--check` print information about kubeprompt status
+- `-h`, `--help` help for kubeprompt
+- `-v`, `--version` print the version

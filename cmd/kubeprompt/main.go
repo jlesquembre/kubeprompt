@@ -12,8 +12,10 @@ func printVersion(name string) {
 }
 
 var (
-	Print    bool
-	printVer bool
+	force     bool
+	printOnly bool
+	printVer  bool
+	check     bool
 )
 
 func main() {
@@ -25,10 +27,13 @@ func main() {
 				printVersion(cmd.Name())
 				return
 			}
-			prompt.Run(Print)
+			prompt.Run(force, printOnly, check)
 		},
 	}
-	rootCmd.PersistentFlags().BoolVarP(&Print, "print", "p", false, "print without checking if enabled")
+
+	rootCmd.Flags().BoolVarP(&force, "force", "f", false, "print without checking if enabled")
+	rootCmd.Flags().BoolVarP(&printOnly, "print-only", "p", false, "print only if enabled")
+	rootCmd.Flags().BoolVarP(&check, "check", "c", false, "print information about kubeprompt status")
 	rootCmd.Flags().BoolVarP(&printVer, "version", "v", false, "print the version")
 	rootCmd.Execute()
 }
