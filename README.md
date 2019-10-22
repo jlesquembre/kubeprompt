@@ -1,51 +1,81 @@
-Current context / NS is saved in the kubeconfig file, see:
+# kubeprompt
 
-https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/
-https://kubernetes.io/docs/tasks/access-application-cluster/configure-access-multiple-clusters/
+Show information about your current kubernetes context
 
-The only source of true is the kubeconfig file. kubectl uses the default
-kubeconfig file, \$HOME/.kube/config, unless the KUBECONFIG environment variable
-does exist. KUBECONFIG is the only environment variable readed by kubectl.
+![prompt](imgs/kubeprompt.png)
 
-If we are working with multiple contexts/NS in multiple terminals, all of them
-will modify the same kubeconfig file when we update the context/NS.
+## Installing
 
-One possible trick to have different configurations per terminal, is to write
-the output of `kubectl config view --flatten` to a temporal file (unique per
-terminal), and set KUBECONFIG value to that temporal file. We can also create an
-env variable (e.g.: LOCAL_KUBECONFIG) to know if KUBECONFIG is pointing to a
-temporal file
+Download it from the
+[releases](https://github.com/jlesquembre/kubeprompt/releases) page or build it
+locally running `make build`
 
-See https://github.com/kubernetes/kubernetes/pull/60044#issuecomment-405420482
+## Usage
 
-TODO if the namespace is not set, we get an error Error: no namespace is set for
-your current context: "gke_spr-sandbox-1_us-central1-a_micro-cluster-1"
+`kubeprompt` is shell-agnostic and thus works on any shell, but every shell has
+a different way to customize its prompt. Some examples:
 
-```
-go run cmd/kubeprompt.go
+fish shell:
+
+```sh
+function fish_prompt
+  echo (kubeprompt -p) '>'
+end
 ```
 
-based on: https://github.com/kubernetes/sample-cli-plugin
+Zsh:
 
-# Usage
+```sh
+PROMPT='$(kubeprompt -p)'$PROMPT
+```
 
-We offer to commands, `kubeprompt` and `kubeon`.
+Bash:
+
+```sh
+PS1='[\u@\h \W $(kubeprompt -p)]\$ '
+```
 
 `kubeprompt` will print to stdout information about the current cluster, but
 first it needs to be enabled. It is considered enabled if the environment
-variable `KUBECONFIG` is set to a file in the `$TMP/kubeprompt` directory
+variable `KUBECONFIG` is set to a file in the `$TMP/kubeprompt` directory. To
+enable it, just execute `kubeprompt`.
 
-`kubeon` will enable the prompt. To do that, it will copy your current
-`KUBECONFIG` to a temporal file in the `$TMP/kubeprompt` directory and launch a
-new shell.
+`kubeprompt` command will print the current K8S context and namespace, if
+kubeprompt is enabled. If not, it will start a sub shell with kubeprompt
+enabled. The sub shell to launch depends on the value of the environment
+variable `SHELL`, starting a `bash` shell if is not defined.
 
-`kubeprompt`: it will print the current K8S context and namespace, if kubeprompt
-is enable. If not, it will start a sub shell with kubeprompt enabled.
-
-Flags:
+Valid flags:
 
 - `-p`, `--print-only` print if kubeprompt is enabled, don't do anything if not
 - `-f`, `--force` print without checking if kubeprompt is enabled
 - `-c`, `--check` print information about kubeprompt status
 - `-h`, `--help` help for kubeprompt
 - `-v`, `--version` print the version
+
+## F.A.Q.
+
+### Why to copy kubeconfig and start a sub shell?
+
+If you are working with multiple contexts/namespaces in multiple terminals, all
+of them will modify the same kubeconfig file when you update the
+context/namespace. For more context, see
+[kubernetes PR #60044](https://github.com/kubernetes/kubernetes/pull/60044#issuecomment-405420482)
+
+Let's suppose that you are working in 2 terminals with `kubectl` in context
+_foo_. Since you are using `kubeprompt`, your prompt shows that the context is
+_foo_. Now, you change the context in one terminal to _bar_, and after it you
+change the focus to the other terminal. Since the prompt information is static,
+in that terminal the prompt still says that the context is _foo_, but that
+information is old, and you could execute a command in the wrong context.
+
+To avoid it, `kubepromt` creates a copy of your current kubeconfig per terminal
+and sets the `KUBECONFIG` environment variable to that copy. If now you change
+the context or the namespace, only that terminal will be affected. If you want
+to disable `kubeprompt` on one terminal, you just need to press `CTRL+d`
+
+## Related tools
+
+- [kubectx](https://github.com/ahmetb/kubectx)
+- [kube-ps1](https://github.com/jonmosco/kube-ps1)
+- [fish-kubectl-prompt](https://github.com/Ladicle/fish-kubectl-prompt)
