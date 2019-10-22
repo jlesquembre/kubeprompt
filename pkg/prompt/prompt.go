@@ -65,6 +65,10 @@ func printPrompt(config clientcmd.ClientConfig) {
 	ctx := rawConfig.CurrentContext
 	ns, _, err := config.Namespace()
 	exit(err)
+	if ctx == "" {
+		ctx = "N/A"
+		ns = "N/A"
+	}
 	fmt.Printf("(K8S %s:%s)\n", Bold(Yellow(ctx)), Bold(Magenta(ns)))
 }
 
