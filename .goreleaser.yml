@@ -1,0 +1,49 @@
+builds:
+  - main: ./cmd/kubeprompt/main.go
+    ldflags:
+      - -s -w -X pkg.version.Version={{.Version}}
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+
+archives:
+  - name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
+    replacements:
+      darwin: Darwin
+      linux: Linux
+      windows: Windows
+      386: i386
+      amd64: x86_64
+
+checksum:
+  name_template: "checksums.txt"
+
+snapshot:
+  name_template: "{{ .Tag }}-next"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - typo
+
+# snapcrafts:
+#   - publish: false
+#     summary: K8S information in your prompt
+#     description: K8S information in your prompt
+#     grade: stable
+#     license: EPL-2.0
+
+brews:
+  - github:
+      owner: jlesquembre
+      name: kubeprompt
+    description: K8S information in your prompt
+    homepage: https://github.com/jlesquembre/kubeprompt
+    test: |
+      system "#{bin}/kubeprompt -v"
