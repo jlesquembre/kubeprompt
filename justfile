@@ -1,4 +1,5 @@
-VERSION_FLAG := "-X " + `go list ./pkg/version` + ".Version=1.0.0"
+VERSION := `git describe --abbrev=0 --tags $(git rev-list --tags --max-count=1)`
+VERSION_FLAG := "-X " + `go list ./pkg/version` + ".Version=" + VERSION + "-dev"
 
 build:
   go build \
