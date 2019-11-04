@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/jlesquembre/kubeprompt/pkg/prompt"
 	"github.com/jlesquembre/kubeprompt/pkg/version"
 	"github.com/spf13/cobra"
@@ -12,10 +13,11 @@ func printVersion(name string) {
 }
 
 var (
-	force     bool
-	printOnly bool
-	printVer  bool
-	check     bool
+	force      bool
+	printOnly  bool
+	printVer   bool
+	check      bool
+	monochrome bool
 )
 
 func main() {
@@ -27,13 +29,14 @@ func main() {
 				printVersion(cmd.Name())
 				return
 			}
-			prompt.Run(force, printOnly, check)
+			prompt.Run(force, printOnly, check, monochrome)
 		},
 	}
 
 	rootCmd.Flags().BoolVarP(&force, "force", "f", false, "print without checking if enabled")
 	rootCmd.Flags().BoolVarP(&printOnly, "print-only", "p", false, "print only if enabled")
 	rootCmd.Flags().BoolVarP(&check, "check", "c", false, "print information about kubeprompt status")
+	rootCmd.Flags().BoolVarP(&monochrome, "monochrome", "m", false, "disables colors in output")
 	rootCmd.Flags().BoolVarP(&printVer, "version", "v", false, "print the version")
 	rootCmd.Execute()
 }
