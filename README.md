@@ -32,7 +32,7 @@ PROMPT='$(kubeprompt -p)'$PROMPT
 Bash:
 
 ```sh
-PS1='[\u@\h \W $(kubeprompt -p)]\$ '
+PS1='[\u@\h \W \$(kubeprompt -p)]\$ '
 ```
 
 `kubeprompt` will print to stdout information about the current cluster, but
