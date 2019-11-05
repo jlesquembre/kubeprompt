@@ -47,11 +47,32 @@ variable `SHELL`, starting a `bash` shell if is not defined.
 
 Valid flags:
 
-- `-p`, `--print-only` print if kubeprompt is enabled, don't do anything if not
+- `-p`, `--print-only` print context information only kubeprompt is enabled,
+  don't do anything if not
 - `-f`, `--force` print without checking if kubeprompt is enabled
+- `-m`, `--monochrome` disables colors in output
 - `-c`, `--check` print information about kubeprompt status
 - `-h`, `--help` help for kubeprompt
 - `-v`, `--version` print the version
+
+## Workflows
+
+There are 2 possible workflows
+
+**Show information only after enable it**
+
+In this case, you call `kubeprompt -p` in your dot files. To display information
+about the current kubernetes context, you must call `kubeprompt` manually to
+enable it. One advange with this aproach is that you can we confident about the
+information in your terminal, since every terminal will have its own kubeconfig.
+
+**Always show information**
+
+In this case, you call `kubeprompt -f` in your dot files. The advantage here is
+that you don't need to enable _kubeprompt_ manually, and the information will be
+always in your prompt. But you cannot know for sure if the information is
+accurate. Since your kubeconfig is global, other applications (or yourself in
+other terminal) can change the global kubernetes context.
 
 ## F.A.Q.
 
