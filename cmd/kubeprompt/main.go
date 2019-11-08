@@ -18,6 +18,7 @@ var (
 	printVer   bool
 	check      bool
 	monochrome bool
+	format     string
 )
 
 func main() {
@@ -29,7 +30,7 @@ func main() {
 				printVersion(cmd.Name())
 				return
 			}
-			prompt.Run(force, printOnly, check, monochrome)
+			prompt.Run(force, printOnly, check, monochrome, format)
 		},
 	}
 
@@ -37,6 +38,7 @@ func main() {
 	rootCmd.Flags().BoolVarP(&printOnly, "print-only", "p", false, "print only if enabled")
 	rootCmd.Flags().BoolVarP(&check, "check", "c", false, "print information about kubeprompt status")
 	rootCmd.Flags().BoolVarP(&monochrome, "monochrome", "m", false, "disables colors in output")
+	rootCmd.Flags().StringVarP(&format, "format", "", "⎈ %s:%s", "custom format string")
 	rootCmd.Flags().BoolVarP(&printVer, "version", "v", false, "print the version")
 	rootCmd.Execute()
 }

@@ -60,7 +60,7 @@ func enableKubeprompt(config clientcmd.ClientConfig) {
 		"KUBECONFIG": configFile})
 }
 
-func printPrompt(config clientcmd.ClientConfig, monochrome bool) {
+func printPrompt(config clientcmd.ClientConfig, monochrome bool, format string) {
 	rawConfig, err := config.RawConfig()
 	ctx := rawConfig.CurrentContext
 	ns, _, err := config.Namespace()
@@ -71,14 +71,14 @@ func printPrompt(config clientcmd.ClientConfig, monochrome bool) {
 	}
 
 	if monochrome {
-		fmt.Printf("(K8S %s:%s)\n", ctx, ns)
+		fmt.Printf(format+"\n", ctx, ns)
 		return
 	}
 
-	fmt.Printf("(K8S %s:%s)\n", Bold(Yellow(ctx)), Bold(Magenta(ns)))
+	fmt.Printf(format+"\n", Bold(Yellow(ctx)), Bold(Magenta(ns)))
 }
 
-func Run(force bool, printOnly bool, check bool, monochrome bool) {
+func Run(force bool, printOnly bool, check bool, monochrome bool, format string) {
 	config := genericclioptions.NewConfigFlags(true).ToRawKubeConfigLoader()
 	kubeconfigPath := config.ConfigAccess().GetDefaultFilename()
 	isActive := isPromptActive(kubeconfigPath)
@@ -93,7 +93,7 @@ func Run(force bool, printOnly bool, check bool, monochrome bool) {
 	}
 
 	if isActive || force {
-		printPrompt(config, monochrome)
+		printPrompt(config, monochrome, format)
 	} else if !printOnly {
 		enableKubeprompt(config)
 	}
