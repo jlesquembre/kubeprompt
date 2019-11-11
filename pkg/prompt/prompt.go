@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"os/signal"
 	"path/filepath"
 	"strings"
 
@@ -14,7 +15,7 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 )
 
-var tempDir string = filepath.Join(os.TempDir(), "kubeprompt")
+var tempDir = filepath.Join(os.TempDir(), "kubeprompt")
 
 func isPromptActive(path string) bool {
 	return strings.HasPrefix(path, tempDir+"/")
@@ -34,10 +35,22 @@ func subShell(extraEnv map[string]string) {
 	}
 	shell := os.Getenv("SHELL")
 	if shell == "" {
-		shell = "/bin/bash"
+		shell = "/usr/bin/env bash"
 	}
 
-	cmd := exec.Command(shell)
+	shellCmd := strings.Fields(shell)
+	cmd := exec.Command(shellCmd[0], shellCmd[1:]...)
+
+	// catch and forwards all signals
+	c := make(chan os.Signal, 1)
+	signal.Notify(c)
+	go func() {
+		for {
+			s := <-c
+			cmd.Process.Signal(s)
+		}
+	}()
+
 	cmd.Stderr = os.Stderr
 	cmd.Stdout = os.Stdout
 	cmd.Stdin = os.Stdin
