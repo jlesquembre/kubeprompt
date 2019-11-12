@@ -47,32 +47,63 @@ variable `SHELL`, starting a `bash` shell if is not defined.
 
 Valid flags:
 
-- `-p`, `--print-only` print context information only kubeprompt is enabled,
-  don't do anything if not
-- `-f`, `--force` print without checking if kubeprompt is enabled
-- `-m`, `--monochrome` disables colors in output
+- `-p`, `--print` print context information
+- `-f`, `--format` custom format string
 - `-c`, `--check` print information about kubeprompt status
 - `-h`, `--help` help for kubeprompt
 - `-v`, `--version` print the version
 
+## Customize prompt
+
+It is possible to customize the prompt using go templates. The templates have
+access to 3 variables, `Ctx`, `Ns` and `Enabled`, and to the
+[color functions provided by Aurora](https://github.com/logrusorgru/aurora#standard-and-bright-colors),
+plus the `Bold`, `Faint`, `Italic` and `Underline` functions.
+
+The default format is
+
+```go
+{{if .Enabled}}(K8S {{.Ctx | Yellow | Bold}}|{{.Ns | Magenta | Bold}}){{end}}
+```
+
+You have 2 options to provide your format string, with `-f` / `--format` option,
+or setting the environment variable `KUBEPROMPT_FORMAT`. If both are provided,
+`-f` is used.
+
+Some examples:
+
+- No colors:
+
+```go
+'(⎈ {{.Ctx}}|{{.Ns}})'
+```
+
+- Print only if kubeprompt is enabled:
+
+```go
+'{{if .Enabled}}{{"⎈" | Black | BgWhite }} {{.Ctx}}|{{.Ns}}{{end}}'
+```
+
+- Print `k8s` string with a different color if kubeprompt is enabled:
+
+```go
+'{{if .Enabled}}{{"k8s"|Green|Bold}}{{else}}{{"k8s"|Red}}{{end}} {{.Ctx}}|{{.Ns}}'
+```
+
 ## Workflows
 
-There are 2 possible workflows
+Usually you'll call `kubeprompt -p` in your dot files. In the terminal you
+usually want to call `kubeprompt` to enable it, because after it, you can be
+confident about the information in your terminal, since every terminal will have
+its own kubeconfig.
 
-**Show information only after enable it**
-
-In this case, you call `kubeprompt -p` in your dot files. To display information
-about the current kubernetes context, you must call `kubeprompt` manually to
-enable it. One advange with this aproach is that you can we confident about the
-information in your terminal, since every terminal will have its own kubeconfig.
-
-**Always show information**
-
-In this case, you call `kubeprompt -f` in your dot files. The advantage here is
-that you don't need to enable _kubeprompt_ manually, and the information will be
-always in your prompt. But you cannot know for sure if the information is
-accurate. Since your kubeconfig is global, other applications (or yourself in
-other terminal) can change the global kubernetes context.
+You can decide if you want to show the kubernetes information always or only
+when _kubeprompt_ is enabled. If you want to show the information always, I
+recommend to use different colors to know if _kubeprompt_ is enabled or not. I
+consider the disabled color as a warning, because in this case, you cannot be
+sure if the information is accurate. Since your kubeconfig is global, other
+applications (or yourself in other terminal) can change the global kubernetes
+context.
 
 ## F.A.Q.
 
@@ -90,7 +121,7 @@ change the focus to the other terminal. Since the prompt information is static,
 in that terminal the prompt still says that the context is _foo_, but that
 information is old, and you could execute a command in the wrong context.
 
-To avoid it, `kubepromt` creates a copy of your current kubeconfig per terminal
+To avoid it, `kubeprompt` creates a copy of your current kubeconfig per terminal
 and sets the `KUBECONFIG` environment variable to that copy. If now you change
 the context or the namespace, only that terminal will be affected. If you want
 to disable `kubeprompt` on one terminal, you just need to press `CTRL+d`
