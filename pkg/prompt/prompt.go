@@ -17,7 +17,9 @@ import (
 )
 
 var tempDir = filepath.Join(os.TempDir(), "kubeprompt")
-var defaultFormat = `{{if .Enabled}}(K8S {{.Ctx | Yellow | Bold}}|{{.Ns | Magenta | Bold}}){{end}}`
+
+// DefaultFormat Default print format
+var DefaultFormat = `{{if .Enabled}}(K8S {{.Ctx | Yellow | Bold}}|{{.Ns | Magenta | Bold}}){{end}}`
 
 // KubeData holds k8s data to render the template
 type KubeData struct {
@@ -128,17 +130,17 @@ func enableKubeprompt(config clientcmd.ClientConfig) {
 }
 
 func getFormatStr(format string) string {
-	if format != "" {
+	if format != "" && format != "default" {
 		return format
 	}
 
 	envFormat := os.Getenv("KUBEPROMPT_FORMAT")
 
-	if envFormat != "" {
+	if envFormat != "" && envFormat != "default" {
 		return envFormat
 	}
 
-	return defaultFormat
+	return DefaultFormat
 }
 
 func printPrompt(config clientcmd.ClientConfig, isActive bool, format string) {
@@ -157,7 +159,7 @@ func printPrompt(config clientcmd.ClientConfig, isActive bool, format string) {
 }
 
 // Run CLI entry point
-func Run(printInfo bool, check bool, format string) {
+func Run(check bool, format string, userFormat bool) {
 	config := genericclioptions.NewConfigFlags(true).ToRawKubeConfigLoader()
 	kubeconfigPath := config.ConfigAccess().GetDefaultFilename()
 	isActive := isPromptActive(kubeconfigPath)
@@ -171,7 +173,7 @@ func Run(printInfo bool, check bool, format string) {
 		return
 	}
 
-	if isActive || printInfo {
+	if isActive || userFormat {
 		printPrompt(config, isActive, getFormatStr(format))
 	} else {
 		enableKubeprompt(config)
