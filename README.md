@@ -19,20 +19,20 @@ fish shell:
 
 ```sh
 function fish_prompt
-  echo (kubeprompt -p) '>'
+  echo (kubeprompt -f default) '>'
 end
 ```
 
 Zsh:
 
 ```sh
-PROMPT='$(kubeprompt -p)'$PROMPT
+PROMPT='$(kubeprompt -f default)'$PROMPT
 ```
 
 Bash:
 
 ```sh
-PS1="[\u@\h \W \$(kubeprompt -p)]\$ "
+PS1="[\u@\h \W \$(kubeprompt -f default)]\$ "
 ```
 
 `kubeprompt` will print to stdout information about the current cluster, but
@@ -47,7 +47,6 @@ variable `SHELL`, starting a `bash` shell if is not defined.
 
 Valid flags:
 
-- `-p`, `--print` print context information
 - `-f`, `--format` custom format string
 - `-c`, `--check` print information about kubeprompt status
 - `-h`, `--help` help for kubeprompt
@@ -92,8 +91,8 @@ Some examples:
 
 ## Workflows
 
-Usually you'll call `kubeprompt -p` in your dot files. In the terminal you
-usually want to call `kubeprompt` to enable it, because after it, you can be
+Usually you'll call `kubeprompt -f default` in your dot files. In the terminal,
+you usually want to call `kubeprompt` to enable it, because after it, you can be
 confident about the information in your terminal, since every terminal will have
 its own kubeconfig.
 
