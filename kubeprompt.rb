@@ -2,16 +2,16 @@
 class Kubeprompt < Formula
   desc "K8S information in your prompt"
   homepage "https://github.com/jlesquembre/kubeprompt"
-  version "0.2.0"
+  version "0.3.0"
   bottle :unneeded
 
   if OS.mac?
-    url "https://github.com/jlesquembre/kubeprompt/releases/download/0.2.0/kubeprompt_Darwin_x86_64.tar.gz"
-    sha256 "1dadfe07eef88841edc0f6a533765bfa1df12c79e426b0b37f55ecd2fa7488f1"
+    url "https://github.com/jlesquembre/kubeprompt/releases/download/0.3.0/kubeprompt_Darwin_x86_64.tar.gz"
+    sha256 "bf86df7a3b63913592d85f7269268b9e9516487e38c25b0abdbfac6bd303a3e0"
   elsif OS.linux?
     if Hardware::CPU.intel?
-      url "https://github.com/jlesquembre/kubeprompt/releases/download/0.2.0/kubeprompt_Linux_x86_64.tar.gz"
-      sha256 "0c34cd817a6f4f382c8af1ccf9b7ccdff399ac74b30e59790bc3a45fe2f43e70"
+      url "https://github.com/jlesquembre/kubeprompt/releases/download/0.3.0/kubeprompt_Linux_x86_64.tar.gz"
+      sha256 "465fc7cd8cd345b1398b42ad8d28b6e5561b3b28b859747ab5b664b1c5ddc1c1"
     end
   end
 
