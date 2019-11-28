@@ -28,6 +28,7 @@ changelog:
     exclude:
       - "^docs:"
       - "^test:"
+      - "^Brew formula update"
       - typo
 
 # snapcrafts:
