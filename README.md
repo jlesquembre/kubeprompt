@@ -4,11 +4,33 @@ Show information about your current kubernetes context
 
 ![prompt](imgs/kubeprompt.png)
 
-## Installing
+## Installation
 
-Download it from the
-[releases](https://github.com/jlesquembre/kubeprompt/releases) page or build it
-locally running `make build`
+### Manual install
+
+Pre-built binaries are available for linux and MacOS on the
+[releases](https://github.com/jlesquembre/kubeprompt/releases) page.
+
+### Brew (MacOS and Linux)
+
+A homebrew tap
+[recipe](https://github.com/jlesquembre/kubeprompt/blob/master/kubeprompt.rb) is
+available.
+
+On MacOS you can use [brew](https://brew.sh/). On Linux you can use
+[Linuxbrew](http://linuxbrew.sh/).
+
+### NixOS
+
+`kubeprompt` is available in the
+[Nix Packages collection](https://github.com/NixOS/nixpkgs/blob/master/pkgs/development/tools/kubeprompt/default.nix).
+
+To install it globally, add it to your `systemPackages`. If you just want to try
+it, you can do it in a Nix shell:
+
+```bash
+nix-shell -p kubeprompt
+```
 
 ## Usage
 
