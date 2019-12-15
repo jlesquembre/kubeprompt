@@ -1,6 +1,6 @@
 # kubeprompt
 
-Show information about your current kubernetes context
+Show the current Kubernetes context and namespace in your prompt
 
 ![prompt](imgs/kubeprompt.png)
 
