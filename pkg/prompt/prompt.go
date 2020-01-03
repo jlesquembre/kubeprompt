@@ -103,6 +103,10 @@ func subShell(extraEnv map[string]string) {
 	go func() {
 		for {
 			s := <-c
+			if s == os.Interrupt {
+				// Special case, do nothing
+				// fmt.Println("\r- Ctrl+C pressed in Terminal")
+			}
 			cmd.Process.Signal(s)
 		}
 	}()
