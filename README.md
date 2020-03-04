@@ -11,14 +11,12 @@ Show the current Kubernetes context and namespace in your prompt
 Pre-built binaries are available for linux and MacOS on the
 [releases](https://github.com/jlesquembre/kubeprompt/releases) page.
 
-### Brew (MacOS and Linux)
+### Homebrew (macOS and Linux)
 
-A homebrew tap
-[recipe](https://github.com/jlesquembre/kubeprompt/blob/master/kubeprompt.rb) is
-available.
-
-On MacOS you can use [brew](https://brew.sh/). On Linux you can use
-[Linuxbrew](http://linuxbrew.sh/).
+```bash
+brew tap jlesquembre/kubeprompt https://github.com/jlesquembre/kubeprompt/
+brew install kubeprompt
+```
 
 ### NixOS
 
