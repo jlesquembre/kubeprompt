@@ -1,6 +1,7 @@
 # kubeprompt
 
-Show the current Kubernetes context and namespace in your prompt
+Isolates KUBECONFIG in each shell and shows the current Kubernetes
+context/namespace in your prompt
 
 ![prompt](imgs/kubeprompt.png)
 
@@ -56,14 +57,19 @@ PS1="[\u@\h \W \$(kubeprompt -f default)]\$ "
 ```
 
 `kubeprompt` will print to stdout information about the current cluster, but
-first it needs to be enabled. It is considered enabled if the environment
+first it needs to be _enabled_. It is considered enabled if the environment
 variable `KUBECONFIG` is set to a file in the `$TMP/kubeprompt` directory. To
-enable it, just execute `kubeprompt`.
+enable it, just execute `kubeprompt`. This will spawn a new shell (based on your
+`SHELL` environment variable) and will copy your current kubeconfig to a new
+temporary file (it uses [k8s cli-runtime][])
 
 `kubeprompt` command will print the current K8S context and namespace, if
 kubeprompt is enabled. If not, it will start a sub shell with kubeprompt
 enabled. The sub shell to launch depends on the value of the environment
 variable `SHELL`, starting a `bash` shell if is not defined.
+
+To _disable_ `kubeprompt` you just need to got back to the previous shell. You
+can do that with the `exit` command or with the `CTRL+d` shortcut.
 
 Valid flags:
 
@@ -72,7 +78,18 @@ Valid flags:
 - `-h`, `--help` help for kubeprompt
 - `-v`, `--version` print the version
 
-## Customize prompt
+## Integration with other tools
+
+`kubeprompt` tries to leverage and complement existing tools.
+
+To read and create a copy of your `KUBECONFIG`, it uses [k8s cli-runtime][]. You
+can expect the same behavior as with the `kubectl` command.
+
+It plays well with [kubectx][], since it uses `kubectl` under the hood.
+
+For the same reason, it also plays well with [k9s][].
+
+## Prompt customization
 
 It is possible to customize the prompt using go templates. The templates have
 access to 3 variables, `Ctx`, `Ns` and `Enabled`, and to the
@@ -114,7 +131,7 @@ Some examples:
 Usually you'll call `kubeprompt -f default` in your dot files. In the terminal,
 you usually want to call `kubeprompt` to enable it, because after it, you can be
 confident about the information in your terminal, since every terminal will have
-its own kubeconfig.
+its own isolated kubeconfig.
 
 You can decide if you want to show the kubernetes information always or only
 when _kubeprompt_ is enabled. If you want to show the information always, I
@@ -147,6 +164,12 @@ to disable `kubeprompt` on one terminal, you just need to press `CTRL+d`
 
 ## Related tools
 
-- [kubectx](https://github.com/ahmetb/kubectx)
+- [kubectx][]
+- [k9s][]
 - [kube-ps1](https://github.com/jonmosco/kube-ps1)
 - [fish-kubectl-prompt](https://github.com/Ladicle/fish-kubectl-prompt)
+- [kubie](https://github.com/sbstp/kubie)
+
+[k8s cli-runtime]: https://github.com/kubernetes/cli-runtime
+[kubectx]: https://github.com/ahmetb/kubectx
+[k9s]: https://github.com/derailed/k9s
