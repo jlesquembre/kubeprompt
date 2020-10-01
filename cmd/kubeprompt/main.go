@@ -13,9 +13,10 @@ func printVersion(name string) {
 }
 
 var (
-	printVer bool
-	check    bool
-	format   string
+	printVer   bool
+	check      bool
+	format     string
+	tempConfig bool
 )
 
 func main() {
@@ -27,11 +28,12 @@ func main() {
 				printVersion(cmd.Name())
 				return
 			}
-			prompt.Run(check, format, cmd.Flags().Changed("format"))
+			prompt.Run(tempConfig, check, format, cmd.Flags().Changed("format"))
 		},
 	}
 
 	rootCmd.Flags().BoolVarP(&check, "check", "c", false, "print information about kubeprompt status")
+	rootCmd.Flags().BoolVarP(&tempConfig, "temp-config", "t", false, "copy current KUBECONFIG to a temporary file")
 	rootCmd.Flags().StringVarP(&format, "format", "f", prompt.DefaultFormat, "print using custom format string")
 	rootCmd.Flags().BoolVarP(&printVer, "version", "v", false, "print the version")
 

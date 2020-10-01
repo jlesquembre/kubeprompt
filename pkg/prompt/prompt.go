@@ -117,17 +117,24 @@ func subShell(extraEnv map[string]string) {
 	cmd.Run()
 }
 
-func enableKubeprompt(config clientcmd.ClientConfig) {
+func copyConfig(config clientcmd.ClientConfig) string {
 	err := os.MkdirAll(tempDir, os.ModePerm)
 	exit(err)
 	tmpfile, err := ioutil.TempFile(tempDir, "kubeconfig.*.yaml")
 	configFile := tmpfile.Name()
 	exit(err)
-	defer os.Remove(configFile)
 
 	rawConfig, err := config.RawConfig()
 	exit(err)
 	clientcmd.WriteToFile(rawConfig, configFile)
+
+	return configFile
+
+}
+
+func enableKubeprompt(config clientcmd.ClientConfig) {
+	configFile := copyConfig(config)
+	defer os.Remove(configFile)
 
 	subShell(map[string]string{
 		"KUBECONFIG": configFile})
@@ -163,10 +170,15 @@ func printPrompt(config clientcmd.ClientConfig, isActive bool, format string) {
 }
 
 // Run CLI entry point
-func Run(check bool, format string, userFormat bool) {
+func Run(tempConfig bool, check bool, format string, userFormat bool) {
 	config := genericclioptions.NewConfigFlags(true).ToRawKubeConfigLoader()
 	kubeconfigPath := config.ConfigAccess().GetDefaultFilename()
 	isActive := isPromptActive(kubeconfigPath)
+
+	if tempConfig {
+		fmt.Println(copyConfig(config))
+		return
+	}
 
 	if check {
 		if isActive {

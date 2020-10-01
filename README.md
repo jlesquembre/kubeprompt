@@ -1,5 +1,7 @@
 # kubeprompt
 
+[![Built with Nix](https://builtwithnix.org/badge.svg)](https://builtwithnix.org)
+
 Isolates KUBECONFIG in each shell and shows the current Kubernetes
 context/namespace in your prompt
 
@@ -74,9 +76,51 @@ can do that with the `exit` command or with the `CTRL+d` shortcut.
 Valid flags:
 
 - `-f`, `--format` custom format string
+- `-t`, `--temp-config` copies the current KUBECONFIG to a temporary file, used
+  with [direnv][]
 - `-c`, `--check` print information about kubeprompt status
 - `-h`, `--help` help for kubeprompt
 - `-v`, `--version` print the version
+
+## Usage with direnv
+
+From version 0.4, `kubeprompt` can be integrated with [direnv][]. In this case,
+there is no need to start a sub shell.
+
+`.envrc` e.g.:
+
+```bash
+export KUBECONFIG=$(kubeprompt -t)
+
+# Only required if you want to set the K8S context
+kubectx minikube
+```
+
+If you use [direnv][] with [nix][] (you should!), use this instead:
+
+`shell.nix`:
+
+```nix
+with import <nixpkgs> { };
+pkgs.mkShell {
+  buildInputs = [
+    # ...
+  ];
+  shellHook = ''
+    export KUBECONFIG=$(kubeprompt -t)
+    kubectx minikube
+  '';
+}
+```
+
+See [direnv Wiki: Nix integration](https://github.com/direnv/direnv/wiki/Nix)
+for more info.
+
+[direnv][] limitations: It is not possible to clean up the temporary KUBECONFIG
+files created when you exit the shell. But those temporary files are usually
+deleted when you shutdown your system. If you don't use [direnv][] and spawn a
+new subshell with `kubeprompt`, the temporary files are deleted after you exit
+the subshell.
 
 ## Integration with other tools
 
@@ -173,3 +217,5 @@ to disable `kubeprompt` on one terminal, you just need to press `CTRL+d`
 [k8s cli-runtime]: https://github.com/kubernetes/cli-runtime
 [kubectx]: https://github.com/ahmetb/kubectx
 [k9s]: https://github.com/derailed/k9s
+[direnv]: https://direnv.net/
+[nix]: (https://nixos.org/)
