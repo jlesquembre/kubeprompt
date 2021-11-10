@@ -39,7 +39,7 @@ changelog:
 #     license: EPL-2.0
 
 brews:
-  - github:
+  - tap:
       owner: jlesquembre
       name: kubeprompt
     description: K8S information in your prompt
